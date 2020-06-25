@@ -1,4 +1,4 @@
-#include "main.h"
+#include "main.hpp"
 // I want to use curses to show download progress
 // Downloads should be managed with priorities, limits, and importantly, sources and destinations
 

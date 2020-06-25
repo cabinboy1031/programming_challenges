@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <string>
 #include <regex>
 #include <curses.h>
 #include <curl/curl.h>
@@ -8,6 +9,5 @@
 #include "link.h"
 
 int main();
-void add_download();
-void add_many_downloads();
-void spawn_window();
+void add_download(std::string);
+void add_many_downloads(std::string*);
