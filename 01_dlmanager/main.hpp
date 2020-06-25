@@ -6,7 +6,7 @@
 #include <curl/curl.h>
 #include <panel.h>
 
-#include "link.h"
+#include "link.hpp"
 
 int main();
 void add_download(std::string);
