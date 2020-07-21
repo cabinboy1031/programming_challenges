@@ -1,0 +1,40 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/ian/projects/programmingNums/10_todo/functions.h
+iostream
+-
+fstream
+-
+string
+-
+vector
+-
+item.h
+/home/ian/projects/programmingNums/10_todo/item.h
+
+/home/ian/projects/programmingNums/10_todo/item.h
+iostream
+-
+string
+-
+
+/home/ian/projects/programmingNums/10_todo/main.cpp
+iostream
+-
+fstream
+-
+string
+-
+vector
+-
+functions.h
+/home/ian/projects/programmingNums/10_todo/functions.h
+item.h
+/home/ian/projects/programmingNums/10_todo/item.h
+
