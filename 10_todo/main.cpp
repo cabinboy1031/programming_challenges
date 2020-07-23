@@ -11,10 +11,11 @@
 int main(int argc, char** argv){
   std::vector<Item> todoList;
   
-  char command;
+	std::string command;
   std::cout << "Insert a command (H for help)" << std::endl << "> ";
-  while((command = std::cin.get()) != 'q'){
-    switch (command){
+  do{
+		getline(std::cin, command);
+    switch (command[0]){
     case 'a':
       add_item(todoList);
       break;
@@ -26,7 +27,7 @@ int main(int argc, char** argv){
       break;
     }
     std::cout << "Insert a command (H for help)" << std::endl << "> ";
-  }
+  } while(command != "q");
 }
 std::vector<std::string> get_list(std::string filepath){
   std::ifstream stream;
@@ -49,12 +50,13 @@ void add_item(std::vector<Item> &list){
   std::string title;
   std::string description;
   std::cout << "Title: ";
-  std::cin >> title;
+	std::getline(std::cin,title);
   if(title.empty()){
     std::cerr << "No title given." << std::endl;
+		return;
   }
   std::cout << "Description: ";
-  std::cin >> description;
+	getline(std::cin,description);
   if(description.empty()){
     std::cerr << "No description given." << std::endl;
   }

@@ -1,12 +1,12 @@
 [
 {
   "directory": "/home/ian/projects/programmingNums/10_todo/build",
-  "command": "/usr/bin/c++      -std=gnu++11 -o CMakeFiles/todo.dir/main.cpp.o -c /home/ian/projects/programmingNums/10_todo/main.cpp",
+  "command": "/usr/bin/c++   -g -std=gnu++11 -o CMakeFiles/todo.dir/main.cpp.o -c /home/ian/projects/programmingNums/10_todo/main.cpp",
   "file": "/home/ian/projects/programmingNums/10_todo/main.cpp"
 },
 {
   "directory": "/home/ian/projects/programmingNums/10_todo/build",
-  "command": "/usr/bin/c++      -std=gnu++11 -o CMakeFiles/todo.dir/item.cpp.o -c /home/ian/projects/programmingNums/10_todo/item.cpp",
+  "command": "/usr/bin/c++   -g -std=gnu++11 -o CMakeFiles/todo.dir/item.cpp.o -c /home/ian/projects/programmingNums/10_todo/item.cpp",
   "file": "/home/ian/projects/programmingNums/10_todo/item.cpp"
 }
 ]
