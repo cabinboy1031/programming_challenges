@@ -65,6 +65,18 @@ void add_item(std::vector<Item> &list){
 }
 
 void delete_item(std::vector<Item> &list){
+	std::cout << "Please enter the number of the item you want to remove." << std::endl;
+	for(int i = 0; i < list.size();i++){
+		std::cout << i << ") " << list[i]._title << std::endl;
+	}
+	std::string to_remove;
+	getline(std::cin, to_remove);
+	int remove_pos = stoi(to_remove);
+	if(remove_pos >= list.size()){
+		std::cout << "Invalid entry." << std::endl;
+	} else {
+		list.erase(list.begin() + remove_pos);
+	}
   
 }
 void print_days(const std::vector<Item> &list, int start, int end){
