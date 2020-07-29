@@ -5,6 +5,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <json/json.h>
 #include "functions.h"
 #include "item.h"
 
@@ -56,6 +57,19 @@ std::vector<std::string> get_list(std::string filepath){
 }
 
 void save_list(std::vector<Item> list, std::string filepath){
+	// File will be saved in a JSON format
+	json::array list_json;
+
+	//save in given file;
+	std::ifstream file;
+	file.open(filepath);
+	if(!file.is_open()){
+		std::cerr << "Error saving file! Unable to access filepath!" << std::endl;
+	}
+
+	//cleanup and ensure the file is closed
+	file.close();
+	// delete list_json
   
 }
 void add_item(std::vector<Item> &list){
