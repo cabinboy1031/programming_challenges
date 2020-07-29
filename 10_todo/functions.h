@@ -5,6 +5,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <nlohmann/json.hpp>
 #include "item.h"
 
 std::vector<Item> load_list(std::string filepath);
