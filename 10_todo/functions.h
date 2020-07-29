@@ -7,7 +7,7 @@
 #include <vector>
 #include "item.h"
 
-std::vector<std::string> get_list(std::string filepath);
+std::vector<Item> load_list(std::string filepath);
 void save_list(std::vector<Item> list, std::string filepath);
 
 void add_item(std::vector<Item> &);

@@ -32,7 +32,8 @@ int main(int argc, char** argv){
 				save_list(todoList, "output_test.json");
 				break;
 			case 'l':
-				// load_list();
+				todoList = load_list("output_test.json");
+				break;
 			case 'h':
 				std::cout << "Help:" << std::endl
 				  << "a: Add item to a list" << std::endl
@@ -85,6 +86,33 @@ void save_list(std::vector<Item> list, std::string filepath){
 	file.close();
 }
 
+std::vector<Item> load_list(std::string filepath){
+	std::vector<Item> buf_list;
+
+	// load from filepath first
+	std::ifstream file;
+	file.open(filepath);
+	if(!file.is_open()){
+		std::cerr << "Error loading file! Does it exist?" << std::endl;
+		return buf_list;
+	}
+	
+	// Load into JSON object
+	json input_json;
+	file >> input_json;
+	file.close();
+
+	// Add to buffer list
+	Item buf_item;
+	for(int i = 0; i < input_json.size(); i++){
+		buf_item._title = input_json[i]["title"];
+		buf_item._description = input_json[i]["description"];
+		buf_list.push_back(buf_item);
+	}	
+
+	print_days(buf_list, 0,0);
+	return buf_list;
+}
 
 void add_item(std::vector<Item> &list){
   std::string title;
