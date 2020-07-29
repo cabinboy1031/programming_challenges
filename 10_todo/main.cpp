@@ -5,9 +5,11 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include <json/json.h>
+#include <nlohmann/json.hpp>
 #include "functions.h"
 #include "item.h"
+
+using json = nlohmann::json;
 
 int main(int argc, char** argv){
   std::vector<Item> todoList;
@@ -27,7 +29,8 @@ int main(int argc, char** argv){
 				print_days(todoList,0,0);
 				break;
 			case 's':
-				// save_list();
+				save_list(todoList, "output_test.json");
+				break;
 			case 'l':
 				// load_list();
 			case 'h':
@@ -57,18 +60,32 @@ std::vector<std::string> get_list(std::string filepath){
 }
 
 void save_list(std::vector<Item> list, std::string filepath){
+	json list_json = json::array();
+
+	for(int i = 0; i < list.size(); i++){
+		list_json[i] = json(
+				{
+				{"title", list[i]._title},
+				{"description", list[i]._description}
+				}
+				);
+	}
+
 	//save in given file;
-	std::ifstream file;
-	file.open(filepath);
+	std::ofstream file;
+	file.open(filepath, std::ofstream::out | std::ofstream::trunc);
+
 	if(!file.is_open()){
 		std::cerr << "Error saving file! Unable to access filepath!" << std::endl;
+	} else {
+		file << list_json.dump(2);
 	}
 
 	//cleanup and ensure the file is closed
 	file.close();
-	// delete list_json
-  
 }
+
+
 void add_item(std::vector<Item> &list){
   std::string title;
   std::string description;
