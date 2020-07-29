@@ -1,3 +1,0 @@
-/home/ian/projects/programmingNums/10_todo/build/CMakeFiles/rebuild_cache.dir
-/home/ian/projects/programmingNums/10_todo/build/CMakeFiles/edit_cache.dir
-/home/ian/projects/programmingNums/10_todo/build/CMakeFiles/todo.dir

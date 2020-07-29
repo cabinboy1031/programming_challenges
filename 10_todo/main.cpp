@@ -57,9 +57,6 @@ std::vector<std::string> get_list(std::string filepath){
 }
 
 void save_list(std::vector<Item> list, std::string filepath){
-	// File will be saved in a JSON format
-	json::array list_json;
-
 	//save in given file;
 	std::ifstream file;
 	file.open(filepath);
