@@ -5,13 +5,25 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_BUILD_TYPE Debug)
 project(cube)
 
-set(OpenGL_GL_PREFERENCE GLVND)
 find_package(glfw3 3.3 REQUIRED)
-find_package(OpenGL)
-
+find_package(OpenGL REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(GLUT REQUIRED)
 
 add_executable(cube main.cpp)
 
-include_directories( ${OPENGL_INCLUDE_DIRS} ${GLUT_INCLUDE_DIRS} )
+include_directories( 
+	${GLFW_INCLUDE_DIR}
+  ${OPENGL_INCLUDE_DIRS}
+	${GLUT_INCLUDE_DIRS}
+	${GLEW_INCLUDE_DIRS}
+	)
 
-target_link_libraries(cube ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
+
+target_link_libraries(cube 
+	glfw
+	OpenGL::GL
+	${OPENGL_LIBRARIES}
+	${GLEW_LIBRARIES}
+	${GLUT_LIBRARIES}
+	)
