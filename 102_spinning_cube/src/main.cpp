@@ -4,6 +4,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include "shader.h"
+
 int main(){
 	if (!glfwInit()) {
     fprintf(stderr, "ERROR: could not start GLFW3\n");
@@ -52,6 +54,8 @@ int main(){
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
+
+	Shader test_shader = Shader("shader_test.vts", "shader_test.fgs");
 	const char* vertex_shader =
 	"#version 400\n"
 	"in vec3 vp;"

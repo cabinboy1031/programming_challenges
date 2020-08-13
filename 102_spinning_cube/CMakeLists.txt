@@ -11,7 +11,9 @@ find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(GLUT REQUIRED)
 
-add_executable(cube src/main.cpp)
+add_executable(cube 
+	src/main.cpp
+	src/shader.cpp)
 
 add_custom_command(TARGET cube POST_BUILD
 	COMMAND cp -r 
