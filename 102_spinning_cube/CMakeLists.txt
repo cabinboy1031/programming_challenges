@@ -11,7 +11,13 @@ find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(GLUT REQUIRED)
 
-add_executable(cube main.cpp)
+add_executable(cube src/main.cpp)
+
+add_custom_command(TARGET cube POST_BUILD
+	COMMAND cp -r 
+	${CMAKE_SOURCE_DIR}/shader
+	${CMAKE_CURRENT_BINARY_DIR}/)
+
 
 include_directories( 
 	${GLFW_INCLUDE_DIR}
