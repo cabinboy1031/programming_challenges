@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.10)
-set(CMAKE_CXX_STANDARD 11)
+cmake_minimum_required(VERSION 3.13)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(OpenGL_GL_PREFERENCE GLVND)
@@ -13,7 +13,9 @@ find_package(GLUT REQUIRED)
 
 add_executable(cube 
 	src/main.cpp
-	src/shader.cpp)
+	src/shader.cpp
+	src/logging.cpp)
+set_property(TARGET cube PROPERTY CXX_STANDARD 20)
 
 file(COPY ${CMAKE_SOURCE_DIR}/shader/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/shader)
 

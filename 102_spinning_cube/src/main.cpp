@@ -1,24 +1,42 @@
 #include <iostream>
 #include <string>
+#include <cassert>
+#include <time.h>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include "logging.h"
 #include "shader.h"
 
+void _update_fps_counter(GLFWwindow *window);
+
 int main(){
+	assert(restart_gl_log());
+	gl_log("starting GLFW\n%s\n", glfwGetVersionString());
+	glfwSetErrorCallback(glfw_error_callback);
 	if (!glfwInit()) {
-    fprintf(stderr, "ERROR: could not start GLFW3\n");
+    gl_log_err("ERROR: could not start GLFW3\n");
     return 1;
   } 
 
-	GLFWwindow* window = glfwCreateWindow(640, 480, "Hello Triangle", NULL, NULL);
+	// OpenGL window options
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_SAMPLES, 4); //anti-aliasing
+
+	GLFWmonitor* mon = glfwGetPrimaryMonitor();
+	const GLFWvidmode* vmode = glfwGetVideoMode(mon);
+	GLFWwindow* window = glfwCreateWindow(vmode->width, vmode->height, "Fun test", mon, NULL);
   if (!window) {
-    fprintf(stderr, "ERROR: could not open window with GLFW3\n");
+    gl_log_err("ERROR: could not open window with GLFW3\n");
     glfwTerminate();
     return 1;
   }
   glfwMakeContextCurrent(window);
+	log_gl_params();
 
 	// start GLEW extension handler
   glewExperimental = GL_TRUE;
@@ -54,36 +72,10 @@ int main(){
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-/*
-	const char* vertex_shader =
-	"#version 400\n"
-	"in vec3 vp;"
-	"void main() {"
-	"  gl_Position = vec4(vp, 1.0);"
-	"}";
-	
-	const char* fragment_shader =
-	"#version 400\n"
-	"out vec4 frag_colour;"
-	"void main() {"
-	"  frag_colour = vec4(0.5, 0.0, 0.5, 1.0);"
-	"}";
-
-	GLuint vs = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vs,1,&vertex_shader,NULL);
-	glCompileShader(vs);
-	GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fs,1,&fragment_shader,NULL);
-	glCompileShader(fs);
-
-	GLuint shader_programme = glCreateProgram();
-	glAttachShader(shader_programme, fs);
-	glAttachShader(shader_programme, vs);
-	glLinkProgram(shader_programme);
-*/
 	Shader test_shader = Shader("shader_test.vts", "shader_test.fgs");
 
 	while(!glfwWindowShouldClose(window)){
+		_update_fps_counter(window);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(test_shader.id());
 		glBindVertexArray(vao);
@@ -94,9 +86,29 @@ int main(){
 		glfwPollEvents();
 
 		glfwSwapBuffers(window);
+
+		if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_ESCAPE)) {
+  		glfwSetWindowShouldClose(window, 1);
+		}
 	}
 
   // close GL context and any other GLFW resources
   glfwTerminate();
 	return 0;
+}
+
+void _update_fps_counter(GLFWwindow *window){
+	static double previous_seconds = glfwGetTime();
+  static int frame_count;
+  double current_seconds = glfwGetTime();
+  double elapsed_seconds = current_seconds - previous_seconds;
+  if (elapsed_seconds > 0.25) {
+    previous_seconds = current_seconds;
+    double fps = (double)frame_count / elapsed_seconds;
+    char tmp[128];
+    sprintf(tmp, "opengl @ fps: %.2f", fps);
+    glfwSetWindowTitle(window, tmp);
+    frame_count = 0;
+  }
+  frame_count++;
 }
