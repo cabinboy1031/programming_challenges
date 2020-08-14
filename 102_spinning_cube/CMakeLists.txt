@@ -15,11 +15,7 @@ add_executable(cube
 	src/main.cpp
 	src/shader.cpp)
 
-add_custom_command(TARGET cube POST_BUILD
-	COMMAND cp -r 
-	${CMAKE_SOURCE_DIR}/shader
-	${CMAKE_CURRENT_BINARY_DIR}/)
-
+file(COPY ${CMAKE_SOURCE_DIR}/shader/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/shader)
 
 include_directories( 
 	${GLFW_INCLUDE_DIR}

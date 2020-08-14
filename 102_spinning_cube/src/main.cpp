@@ -54,8 +54,7 @@ int main(){
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-
-	Shader test_shader = Shader("shader_test.vts", "shader_test.fgs");
+/*
 	const char* vertex_shader =
 	"#version 400\n"
 	"in vec3 vp;"
@@ -81,10 +80,12 @@ int main(){
 	glAttachShader(shader_programme, fs);
 	glAttachShader(shader_programme, vs);
 	glLinkProgram(shader_programme);
+*/
+	Shader test_shader = Shader("shader_test.vts", "shader_test.fgs");
 
 	while(!glfwWindowShouldClose(window)){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glUseProgram(shader_programme);
+		glUseProgram(test_shader.id());
 		glBindVertexArray(vao);
 
 		glDrawArrays(GL_TRIANGLES, 0, 3);
