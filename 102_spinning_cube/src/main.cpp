@@ -72,7 +72,7 @@ int main(){
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-	Shader test_shader = Shader("shader_test.vts", "shader_test.fgs");
+	Shader test_shader = Shader("test.vert", "test.frag");
 
 	while(!glfwWindowShouldClose(window)){
 		_update_fps_counter(window);
