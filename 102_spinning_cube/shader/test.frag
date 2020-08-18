@@ -1,6 +1,9 @@
 #version 330 core
 
+in vec4 vertexColor;
+
 out vec3 fragColor;
+
 void main(){
-  fragColor = vec3(1, 0, 1);
+	fragColor = abs(vertexColor.xyz);
 }

@@ -1,8 +1,17 @@
 #version 330 core
 
-layout (location = 0) in vec3 position;
+// Input vertex data, different for all executions of this shader.
+layout(location = 0) in vec3 vertexPosition_modelspace;
+  
+// Values that stay constant for the whole mesh.
+uniform mat4 MVP;
+  
+out vec4 vertexColor;
 
 void main(){
-  int dx = 0,dy = 0,dz = 0; // For modifying later
-  gl_Position = vec4(position.x + dx, position.y + dy, position.z + dz, 1.0);
+  // Output position of the vertex, in clip space : MVP * position
+  gl_Position =  MVP * vec4(vertexPosition_modelspace,1);
+	
+	vertexColor = vec4(vertexPosition_modelspace,1.0);
+	
 }

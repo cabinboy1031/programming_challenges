@@ -10,6 +10,7 @@ find_package(glfw3 3.3 REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(GLUT REQUIRED)
+find_package(glm REQUIRED)
 
 add_executable(cube 
 	src/main.cpp
