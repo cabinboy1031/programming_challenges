@@ -1,73 +1,105 @@
 #include "shader.h"
 
+Shader::Shader(){
+  program_id = glCreateProgram();
+}
 
 Shader::Shader(std::string vertex_filepath, std::string fragment_filepath){
-	std::string shader_path = "./shader/";
-
-	std::string vertex_source;
-	std::string fragment_source;
-
-	std::ifstream file;
-
-	file.open(shader_path + vertex_filepath);
-	if(!file.is_open()){
-		std::cerr << "File not found!" << std::endl;
-		return;
-	} else {
-		std::stringstream bufStream;
-		bufStream << file.rdbuf();
-		vertex_source = bufStream.str();
-	  file.close();
-	}
-
-	file.open(shader_path + fragment_filepath);
-	if(!file.is_open()){
-		std::cerr << "File not found!" << std::endl;
-		return;
-	} else {
-		std::stringstream bufStream;
-		bufStream << file.rdbuf();
-		fragment_source = bufStream.str();
-		file.close();
-	}
-
-	char const *vertex_ptr = vertex_source.c_str();
-	char const *fragment_ptr = fragment_source.c_str();
-
-	GLint Result = GL_FALSE;
-	int InfoLogLength;
-
-	std::cout << "Compiling shader:" <<  vertex_filepath << std::endl;
-	GLuint vs = compile_shader(GL_VERTEX_SHADER, &vertex_ptr[0]);
-
-	// Check Vertex Shader
-	glGetShaderiv(vs , GL_COMPILE_STATUS, &Result);
-	glGetShaderiv(vs , GL_INFO_LOG_LENGTH, &InfoLogLength);
-	if ( InfoLogLength > 0 ){
-		std::vector<char> vertex_error(InfoLogLength+1);
-		glGetShaderInfoLog(vs , InfoLogLength, NULL, &vertex_error[0]);
-		std::cout <<  &vertex_error[0] << std::endl;
-	}
-
-	std::cout << "Compiling shader:" <<  fragment_filepath << std::endl;
-	GLuint fs = compile_shader(GL_FRAGMENT_SHADER, &fragment_ptr[0]);
-
-	// Check Vertex Shader
-	glGetShaderiv(fs , GL_COMPILE_STATUS, &Result);
-	glGetShaderiv(fs , GL_INFO_LOG_LENGTH, &InfoLogLength);
-	if ( InfoLogLength > 0 ){
-		std::vector<char> fragment_error(InfoLogLength+1);
-		glGetShaderInfoLog(vs , InfoLogLength, NULL, &fragment_error[0]);
-		std::cout <<  &fragment_error[0] << std::endl;
-	}
+  load(vertex_filepath, GL_VERTEX_SHADER);
+  load(fragment_filepath, GL_FRAGMENT_SHADER);
 
 	std::cout << "Linking program" << std::endl;
 	program_id = glCreateProgram();
-	glAttachShader(program_id , fs);
-	glAttachShader(program_id , vs);
+  attach(shaders_id[GL_FRAGMENT_SHADER]);
+  attach(shaders_id[GL_VERTEX_SHADER]);
 	glLinkProgram(program_id);
 
-	// Check the program
+  //check the program
+  debug_program();
+}
+
+std::string Shader::load_file(std::string shader_filepath){
+  std::ifstream file;
+  std::string shader_source;
+  std::string shader_path = "./shader/";
+
+	file.open(shader_path + shader_filepath);
+	if(!file.is_open()){
+		std::cerr << "Cannot open " << shader_filepath << "! File not found!" << std::endl;
+		return "";
+	} else {
+		std::stringstream bufStream;
+		bufStream << file.rdbuf();
+		shader_source = bufStream.str();
+	  file.close();
+	}
+
+  return shader_source;
+}
+
+GLuint Shader::load(std::string filepath, GLenum shader_type){
+  std::string shader_src = load_file(filepath);
+
+  const char *ptr = shader_src.c_str();
+
+
+	std::cout << "Compiling shader:" <<  filepath << std::endl;
+  GLuint shader_id = compile(shader_type, ptr);
+  debug_shader(shader_id);
+
+  shaders_id[shader_type] = shader_id;
+  return shader_id;
+}
+
+GLuint Shader::load(GLuint shader_id, GLenum shader_type){
+  shaders_id[shader_type] = shader_id;
+  return shader_id;
+}
+
+GLuint Shader::compile(GLenum shader_type, const char* shader_src){
+  GLuint shader_bin = glCreateShader(shader_type);
+  glShaderSource(shader_bin, 1, &shader_src,NULL);
+  glCompileShader(shader_bin);
+
+  // check for compile errors
+  int params = -1;
+  glGetShaderiv(shader_bin, GL_COMPILE_STATUS, &params);
+  if (GL_TRUE != params) {
+    gl_log_err("ERROR: GL shader index %i did not compile\n", shader_bin);
+    _print_shader_info_log(shader_bin);
+    return 0; // or exit or something
+  }
+
+  return shader_bin;
+}
+
+void Shader::attach(GLuint shader_id){
+  glAttachShader(program_id,shader_id);
+}
+
+void Shader::link(){
+  glLinkProgram(program_id);
+}
+
+void Shader::debug_shader(GLuint shader_id){
+	GLint Result = GL_FALSE;
+	int InfoLogLength;
+
+	// Check Vertex Shader
+	glGetShaderiv(shader_id , GL_COMPILE_STATUS, &Result);
+	glGetShaderiv(shader_id , GL_INFO_LOG_LENGTH, &InfoLogLength);
+	if ( InfoLogLength > 0 ){
+		std::vector<char> shader_error(InfoLogLength+1);
+		glGetShaderInfoLog(shader_id , InfoLogLength, NULL, &shader_error[0]);
+		std::cout <<  &shader_error[0] << std::endl;
+	}
+}
+
+void Shader::debug_program(){
+	GLint Result = GL_FALSE;
+	int InfoLogLength;
+	int params = -1;
+
 	glGetProgramiv(program_id, GL_LINK_STATUS, &Result);
 	glGetProgramiv(program_id, GL_INFO_LOG_LENGTH, &InfoLogLength);
 	if ( InfoLogLength > 0 ){
@@ -76,8 +108,6 @@ Shader::Shader(std::string vertex_filepath, std::string fragment_filepath){
 		std::cout << &program_error[0] << std::endl;
 	}
 
-	//Check if link was successful
-	int params = -1;
 	glGetProgramiv(program_id, GL_LINK_STATUS, &params);
 	if (GL_TRUE != params) {
 		gl_log_err("ERROR: could not link shader programme GL index %u\n",
@@ -85,23 +115,6 @@ Shader::Shader(std::string vertex_filepath, std::string fragment_filepath){
 		_print_program_info_log(program_id);
 		return;
 	}
-}
-
-GLuint Shader::compile_shader(GLenum shader_type, const char* shader_src){
-		GLuint shader_bin = glCreateShader(shader_type);
-		glShaderSource(shader_bin, 1, &shader_src,NULL);
-		glCompileShader(shader_bin);
-
-		// check for compile errors
-		int params = -1;
-		glGetShaderiv(shader_bin, GL_COMPILE_STATUS, &params);
-		if (GL_TRUE != params) {
-			gl_log_err("ERROR: GL shader index %i did not compile\n", shader_bin);
-			_print_shader_info_log(shader_bin);
-			return 0; // or exit or something
-		}
-
-		return shader_bin;
 }
 
 void Shader::_print_shader_info_log(GLuint shader_bin) {
