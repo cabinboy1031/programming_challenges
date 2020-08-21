@@ -1,6 +1,5 @@
 #include "logging.h"
 
-
 #define GL_LOG_FILE "gl.log"
 
 bool restart_gl_log() {

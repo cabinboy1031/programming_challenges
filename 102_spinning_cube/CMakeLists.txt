@@ -12,7 +12,7 @@ find_package(GLEW REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(glm REQUIRED)
 
-add_executable(cube 
+add_executable(cube
 	src/main.cpp
 	src/shader.cpp
 	src/logging.cpp)
@@ -20,7 +20,7 @@ set_property(TARGET cube PROPERTY CXX_STANDARD 20)
 
 file(COPY ${CMAKE_SOURCE_DIR}/shader/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/shader)
 
-include_directories( 
+include_directories(
 	${GLFW_INCLUDE_DIR}
   ${OPENGL_INCLUDE_DIRS}
 	${GLUT_INCLUDE_DIRS}
@@ -28,7 +28,7 @@ include_directories(
 	)
 
 
-target_link_libraries(cube 
+target_link_libraries(cube
 	glfw
 	OpenGL::GL
 	${OPENGL_LIBRARIES}
