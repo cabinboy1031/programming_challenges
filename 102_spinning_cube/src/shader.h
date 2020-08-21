@@ -12,23 +12,24 @@
 
 class Shader{
 public:
-  Shader();
-	Shader(std::string vertex_filepath, std::string fragment_filepath);
+  Shader(); // basic shader constructor
+	Shader(std::string vertex_filepath, std::string fragment_filepath); // Full load using two filepaths
 
-	GLuint id() const { return this->program_id; };
+	GLuint id() const { return this->program_id; }; //program_id accessor
+
+  GLuint load(std::string filepath, GLenum shader_type); //load and compile shader from file, overwrites the shader assigned to shader_type if already assigned. Returns compiled shader id
+  GLuint load(GLuint shader_id, GLenum shader_type); // Adds already exsting shader to shaders_id, overwrites the shader assigned to shader_type if already assigned. Returns shader id
+
+  void generate_program(); //Finalize the program. It will be ready to use after calling this.
+private:
+	GLuint program_id; // Final shader program id. Argument for glUseProgram().
+  std::map<GLenum, GLuint> shaders_id;
 
   std::string load_file(std::string shader_filepath);
-
-  GLuint load(std::string filepath, GLenum shader_type);
-  GLuint load(GLuint shader_id, GLenum shader_type);
-
 	GLuint compile(GLenum shader_type, const char* shader_src);
+  void attach(); 
   void attach(GLuint shader_id);
   void link();
-
-private:
-	GLuint program_id;
-  std::map<GLenum, GLuint> shaders_id;
 
   void debug_shader(GLuint shader_id);
   void debug_program();

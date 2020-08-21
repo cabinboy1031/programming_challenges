@@ -1,21 +1,11 @@
 #include "shader.h"
 
-Shader::Shader(){
-  program_id = glCreateProgram();
-}
-
 Shader::Shader(std::string vertex_filepath, std::string fragment_filepath){
   load(vertex_filepath, GL_VERTEX_SHADER);
   load(fragment_filepath, GL_FRAGMENT_SHADER);
 
-	std::cout << "Linking program" << std::endl;
 	program_id = glCreateProgram();
-  attach(shaders_id[GL_FRAGMENT_SHADER]);
-  attach(shaders_id[GL_VERTEX_SHADER]);
-	glLinkProgram(program_id);
-
-  //check the program
-  debug_program();
+  generate_program();
 }
 
 std::string Shader::load_file(std::string shader_filepath){
@@ -56,6 +46,12 @@ GLuint Shader::load(GLuint shader_id, GLenum shader_type){
   return shader_id;
 }
 
+void Shader::generate_program(){
+  program_id = glCreateProgram();
+  attach();
+  link();
+}
+
 GLuint Shader::compile(GLenum shader_type, const char* shader_src){
   GLuint shader_bin = glCreateShader(shader_type);
   glShaderSource(shader_bin, 1, &shader_src,NULL);
@@ -73,12 +69,20 @@ GLuint Shader::compile(GLenum shader_type, const char* shader_src){
   return shader_bin;
 }
 
+void Shader::attach(){
+  for(auto& shader : shaders_id){
+    attach(shader.second);
+  }
+}
+
 void Shader::attach(GLuint shader_id){
   glAttachShader(program_id,shader_id);
 }
 
 void Shader::link(){
+	std::cout << "Linking program" << std::endl;
   glLinkProgram(program_id);
+  debug_program();
 }
 
 void Shader::debug_shader(GLuint shader_id){
