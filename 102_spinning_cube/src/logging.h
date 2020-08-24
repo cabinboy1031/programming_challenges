@@ -1,3 +1,5 @@
+#ifndef LOGGING_H
+#define LOGGING_H
 #include <iostream>
 #include <time.h>
 #include <stdarg.h>
@@ -17,3 +19,4 @@ void glfw_error_callback(int error, const char* description);
 
 //parameters
 void log_gl_params();
+#endif //LOGGING_H

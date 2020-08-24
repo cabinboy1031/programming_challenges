@@ -1,5 +1,7 @@
 #include "shader.h"
 
+Shader::Shader() {}
+
 Shader::Shader(std::string vertex_filepath, std::string fragment_filepath){
   load(vertex_filepath, GL_VERTEX_SHADER);
   load(fragment_filepath, GL_FRAGMENT_SHADER);

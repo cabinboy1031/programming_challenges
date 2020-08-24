@@ -15,7 +15,8 @@ find_package(glm REQUIRED)
 add_executable(cube
 	src/main.cpp
 	src/shader.cpp
-	src/logging.cpp)
+	src/logging.cpp
+	src/model.cpp)
 set_property(TARGET cube PROPERTY CXX_STANDARD 20)
 
 file(COPY ${CMAKE_SOURCE_DIR}/shader/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/shader)
