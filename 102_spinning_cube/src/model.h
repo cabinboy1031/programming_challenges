@@ -69,10 +69,7 @@ public:
   // Model finalization
   void create_vertex_object();
   GLuint id() {return vertex_array_object;}
-
-  void set_shader(Shader in){
-    program = in;
-  };
+  void set_shader(Shader in){ program = in; };
 
   Transform get_world_pos();
 

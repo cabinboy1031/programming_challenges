@@ -12,24 +12,78 @@
 #include <GLFW/glfw3.h>
 #include "logging.h"
 
+enum UniformType {
+  GLSL_UNIFORM_1_FLOAT,
+  GLSL_UNIFORM_2_FLOAT,
+  GLSL_UNIFORM_3_FLOAT,
+  GLSL_UNIFORM_4_FLOAT,
+  GLSL_UNIFORM_1_INT,
+  GLSL_UNIFORM_2_INT,
+  GLSL_UNIFORM_3_INT,
+  GLSL_UNIFORM_4_INT,
+  GLSL_UNIFORM_1_UINT,
+  GLSL_UNIFORM_2_UINT,
+  GLSL_UNIFORM_3_UINT,
+  GLSL_UNIFORM_4_UINT,
+  GLSL_UNIFORM_VAR_1_FLOAT,
+  GLSL_UNIFORM_VAR_2_FLOAT,
+  GLSL_UNIFORM_VAR_3_FLOAT,
+  GLSL_UNIFORM_VAR_4_FLOAT,
+  GLSL_UNIFORM_VAR_1_INT,
+  GLSL_UNIFORM_VAR_2_INT,
+  GLSL_UNIFORM_VAR_3_INT,
+  GLSL_UNIFORM_VAR_4_INT,
+  GLSL_UNIFORM_VAR_1_UINT,
+  GLSL_UNIFORM_VAR_2_UINT,
+  GLSL_UNIFORM_VAR_3_UINT,
+  GLSL_UNIFORM_VAR_4_UINT,
+  GLSL_UNIFORM_MATRIX_VAR_2_FLOAT,
+  GLSL_UNIFORM_MATRIX_VAR_3_FLOAT,
+  GLSL_UNIFORM_MATRIX_VAR_4_FLOAT,
+  GLSL_UNIFORM_MATRIX_VAR_2x3_FLOAT,
+  GLSL_UNIFORM_MATRIX_VAR_3x2_FLOAT,
+  GLSL_UNIFORM_MATRIX_VAR_2x4_FLOAT,
+  GLSL_UNIFORM_MATRIX_VAR_4x2_FLOAT,
+  GLSL_UNIFORM_MATRIX_VAR_3x4_FLOAT,
+  GLSL_UNIFORM_MATRIX_VAR_4x3_FLOAT,
+};
+
 class Shader{
 public:
   Shader(); // basic shader constructor
   Shader(std::string vertex_filepath, std::string fragment_filepath); // Full load using two filepaths
 
-  GLuint id() const { return this->program_id; }; //program_id accessor
+  /** Program id accessor.
+   *  Warning: Using an id of a Shader object while valid_program is false will cause undefined behavior.
+   */
+  GLuint id() const { return this->program_id; }
+  bool is_valid() { return valid_program; }
 
-  GLuint load(std::string filepath, GLenum shader_type); //load and compile shader from file, overwrites the shader assigned to shader_type if already assigned. Returns compiled shader id
-  GLuint load(GLuint shader_id, GLenum shader_type); // Adds already exsting shader to shaders_id, overwrites the shader assigned to shader_type if already assigned. Returns shader id
+  /** Load shader and compile if neccesary.
+   * Writes to shader_type. If there is already a shader_id written to shader_type, it will be overwritten.
+   */
+  GLuint load(std::string filepath, GLenum shader_type); // From file
+  GLuint load(GLuint shader_id, GLenum shader_type); // Precompiled shader.
 
-  void generate_program(); //Finalize the program. It will be ready to use after calling this.
+  /** Finalize the program. Shader will be ready to use for drawing after calling.
+   * Requires at least one shader to be loaded in the object to work.
+   * Sets valid_program to true if successful.
+   */
+  void generate_program();
+
+  /** Add a known uniform to the shader.
+   *  Requires valid_program to be true to do anything.
+   */
+  GLuint link_uniform(std::string uniform_id, UniformType type);
 private:
+  bool valid_program;
   GLuint program_id; // Final shader program id. Argument for glUseProgram().
   std::map<GLenum, GLuint> shaders_id;
+  std::map<std::string,UniformType> uniform_id; // TODO add uniform id support
 
-  std::string load_file(std::string shader_filepath);
+  std::string load_file(std::string shader_filepath); // Helper function that returns shader source code
   GLuint compile(GLenum shader_type, const char* shader_src);
-  void attach(); 
+  void attach();
   void attach(GLuint shader_id);
   void link();
 

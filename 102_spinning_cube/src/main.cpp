@@ -120,13 +120,10 @@ int main(){
                                  glm::vec3(0,0,0), // and looks at the origin
                                  glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
                                  );
-
   // Model matrix : an identity matrix (model will be at the origin)
   glm::mat4 model = glm::mat4(1.0f);
 
-  glm::vec3 rotationAxis = glm::vec3(0,1,0);
-
-  // Our ModelViewProjection : multiplication of our 3 matrices
+  // Our ModelViewProjection
   glm::mat4 mvp = projection * camera * model; // Remember, matrix multiplication is the other way around
   /*
   GLuint vbo = 0;
@@ -147,33 +144,34 @@ int main(){
   glBindBuffer(GL_ARRAY_BUFFER, vbo.id());
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
   */
-  Shader test_shader = Shader("test.vert", "test.frag");
+  Shader default_shader = Shader();
+  default_shader.load("default.vert", GL_VERTEX_SHADER);
+  default_shader.load("test.frag", GL_FRAGMENT_SHADER);
+  default_shader.generate_program();
+
   Model vao = Model();
   vao[VERTEX_POSITION] = vbo;
   vao.create_vertex_object();
-  vao.set_shader(test_shader);
+  vao.set_shader(default_shader);
 
 
   // Get a handle for our "MVP" uniform
   // Only during the initialisation
-  GLuint MatrixID = glGetUniformLocation(test_shader.id(), "MVP");
-
-  mvp = projection * camera * model;
+  GLuint MatrixID = glGetUniformLocation(default_shader.id(), "MVP");
 
   float time = 0.0f;
   while(!glfwWindowShouldClose(window)){
     _update_fps_counter(window);
-    model = glm::rotate(0.01f,rotationAxis) * model;
+    model = glm::rotate(0.01f,glm::vec3(0,1,0)) * model;
+    model = glm::rotate(0.005f,glm::vec3(1,0,0)) * model;
     mvp = projection * camera * model;
     // Send our transformation to the currently bound shader, in the "MVP" uniform
     // This is done in the main loop since each model will have a different MVP matrix (At least for the M part)
     glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp[0][0]);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     vao.draw(GL_TRIANGLES);
 
     glfwPollEvents();
-
     glfwSwapBuffers(window);
 
     if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_ESCAPE)) {
