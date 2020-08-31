@@ -54,6 +54,14 @@ void Shader::generate_program(){
   valid_program = true;
 }
 
+void Shader::link_uniform(std::string uniform_name, UniformType type){
+  if(!is_valid()){
+    return;
+  }
+  uniform_id[uniform_name].id = glGetUniformLocation(program_id, uniform_name.c_str());
+  uniform_id[uniform_name].type = type;
+}
+
 GLuint Shader::compile(GLenum shader_type, const char* shader_src){
   GLuint shader_bin = glCreateShader(shader_type);
   glShaderSource(shader_bin, 1, &shader_src,NULL);

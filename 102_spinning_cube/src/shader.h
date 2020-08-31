@@ -48,6 +48,11 @@ enum UniformType {
   GLSL_UNIFORM_MATRIX_VAR_4x3_FLOAT,
 };
 
+struct UniformID {
+  GLuint id;
+  UniformType type;
+};
+
 class Shader{
 public:
   Shader(); // basic shader constructor
@@ -57,6 +62,9 @@ public:
    *  Warning: Using an id of a Shader object while valid_program is false will cause undefined behavior.
    */
   GLuint id() const { return this->program_id; }
+  UniformID get_uniform(std::string name) {return uniform_id[name];}
+  GLuint get_uniform_id(std::string name) { return uniform_id[name].id; }
+  UniformType get_uniform_type(std::string name) {return uniform_id[name].type; }
   bool is_valid() { return valid_program; }
 
   /** Load shader and compile if neccesary.
@@ -72,14 +80,20 @@ public:
   void generate_program();
 
   /** Add a known uniform to the shader.
+   *  Linking a uniform associates a uniform to a string and type,
+   *  lets the program know that a shader uses the uniform as well,
+   *  uniform_name MUST be the same as in shader.
+   *  type may be optional but preferred for checking.
    *  Requires valid_program to be true to do anything.
+   *  Updating a uniform will still have to be done manually through glUniform*() functions.
    */
-  GLuint link_uniform(std::string uniform_id, UniformType type);
+   void link_uniform(std::string uniform_name, UniformType type);
+
 private:
   bool valid_program;
   GLuint program_id; // Final shader program id. Argument for glUseProgram().
   std::map<GLenum, GLuint> shaders_id;
-  std::map<std::string,UniformType> uniform_id; // TODO add uniform id support
+  std::map<std::string,UniformID> uniform_id; 
 
   std::string load_file(std::string shader_filepath); // Helper function that returns shader source code
   GLuint compile(GLenum shader_type, const char* shader_src);

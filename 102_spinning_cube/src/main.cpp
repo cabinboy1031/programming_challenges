@@ -148,16 +148,14 @@ int main(){
   default_shader.load("default.vert", GL_VERTEX_SHADER);
   default_shader.load("test.frag", GL_FRAGMENT_SHADER);
   default_shader.generate_program();
+  // Get a handle for our "MVP" uniform
+  // Only during initialisation
+  default_shader.link_uniform("MVP",GLSL_UNIFORM_MATRIX_VAR_4_FLOAT);
 
   Model vao = Model();
   vao[VERTEX_POSITION] = vbo;
   vao.create_vertex_object();
   vao.set_shader(default_shader);
-
-
-  // Get a handle for our "MVP" uniform
-  // Only during the initialisation
-  GLuint MatrixID = glGetUniformLocation(default_shader.id(), "MVP");
 
   float time = 0.0f;
   while(!glfwWindowShouldClose(window)){
@@ -167,7 +165,11 @@ int main(){
     mvp = projection * camera * model;
     // Send our transformation to the currently bound shader, in the "MVP" uniform
     // This is done in the main loop since each model will have a different MVP matrix (At least for the M part)
-    glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &mvp[0][0]);
+    glUniformMatrix4fv(default_shader.get_uniform_id("MVP"),
+                       1,
+                       GL_FALSE,
+                       &mvp[0][0]);
+    
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     vao.draw(GL_TRIANGLES);
 
