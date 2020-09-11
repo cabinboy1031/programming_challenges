@@ -1,4 +1,7 @@
 #include "model.h"
+
+#ifndef TRANSFORM_H
+#define TRANSFORM_H
 void Transform::translate(glm::vec3 in){
   glm::mat4 transform = glm::translate(glm::mat4(), in);
   translation = transform * translation;
@@ -19,30 +22,38 @@ void Transform::scale(float in){
 glm::mat4 Transform::get_transform_matrix(){
   return translation * rotation * size;
 }
-BufferData::BufferData(){
+#endif //TRANSFORM_H
+
+template<typename T>
+BufferData<T>::BufferData(){
 }
 
-BufferData::BufferData(std::vector<GLfloat> data){
+template<typename T>
+BufferData<T>::BufferData(std::vector<T> data){
   _size = data.size();
   _data = data;
 }
 
-void BufferData::set_data(std::vector<GLfloat> data){
+template<typename T>
+void BufferData<T>::set_data(std::vector<T> data){
   _size = data.size();
   _data = data;
 }
 
-void BufferData::create_buffer_object(){
+template<typename T>
+void BufferData<T>::create_buffer_object(){
   GLuint buffer_object;
   glGenBuffers(1, &buffer_object);
   glBindBuffer(GL_ARRAY_BUFFER, buffer_object);
-  glBufferData(GL_ARRAY_BUFFER, _data.size() * 4 , _data.data(), GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, _data.size() * sizeof(T) , _data.data(), GL_STATIC_DRAW);
   buffer_id = buffer_object;
 }
 
-Model::Model(){}
+template<typename bufferT>
+Model<bufferT>::Model(){}
 
-void Model::create_vertex_object(){
+template<typename bufferT>
+void Model<bufferT>::create_vertex_object(){
   GLuint vao;
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
@@ -52,8 +63,12 @@ void Model::create_vertex_object(){
   }
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 }
-Transform Model::get_world_pos(){ return Transform(world_pos);}
-void Model::draw(GLenum draw_mode){
+
+template<typename bufferT>
+Transform Model<bufferT>::get_world_pos(){ return Transform(world_pos);}
+
+template<typename bufferT>
+void Model<bufferT>::draw(GLenum draw_mode){
   glUseProgram(program.id());
   glBindVertexArray(vertex_array_object);
   glDrawArrays(draw_mode, 0, 12 * 3);

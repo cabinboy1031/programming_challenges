@@ -132,7 +132,7 @@ int main(){
   glBufferData(GL_ARRAY_BUFFER, g_vertex_buffer_data.size() * 4 , g_vertex_buffer_data.data(), GL_STATIC_DRAW);
   */
 
-  BufferData vbo = BufferData();
+  BufferData<GLfloat> vbo;
   vbo.set_data(g_vertex_buffer_data);
   vbo.create_buffer_object();
 
@@ -152,7 +152,7 @@ int main(){
   // Only during initialisation
   default_shader.link_uniform("MVP",GLSL_UNIFORM_MATRIX_VAR_4_FLOAT);
 
-  Model vao = Model();
+  Model<GLfloat> vao;
   vao[VERTEX_POSITION] = vbo;
   vao.create_vertex_object();
   vao.set_shader(default_shader);

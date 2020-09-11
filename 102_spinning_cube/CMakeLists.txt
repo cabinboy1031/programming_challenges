@@ -16,7 +16,8 @@ add_executable(cube
 	src/main.cpp
 	src/shader.cpp
 	src/logging.cpp
-	src/model.cpp)
+	src/model.cpp
+  src/model-impl.cpp)
 
 add_library(cabinGL
   src/shader.cpp

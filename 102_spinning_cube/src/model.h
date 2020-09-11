@@ -13,6 +13,8 @@
 #include "logging.h"
 #include "shader.h"
 
+#ifndef TRANSFORM_H
+#define TRANSFORM_H
 struct Transform{
   glm::mat4 translation;
   glm::mat4 rotation; // Rotation in degrees
@@ -25,21 +27,24 @@ struct Transform{
   void scale(float);
   glm::mat4 get_transform_matrix();
 };
+#endif TRANSFORM_H
 
 // The vertex buffer object.
+template<typename T>
 class BufferData {
 public:
   BufferData();
-  BufferData(std::vector<GLfloat> data);
+  BufferData(std::vector<T> data);
 
-  void set_data(std::vector<GLfloat> data);
+  void set_data(std::vector<T> data);
+  //void set_data(T* data);
   void create_buffer_object(); // Buffer finalization
 
-  std::vector<GLfloat> data() const { return _data; };
+  std::vector<T> data() const { return _data; };
   int size() const { return _size; }
   GLuint id(){ return buffer_id; }
 private:
-  std::vector<GLfloat> _data;
+  std::vector<T> _data;
   int _size;
   GLuint buffer_id;
 };
@@ -60,11 +65,12 @@ enum VertexDataLayer{
  * The primary model object that will the VAO it is assigned.
  * 
  */
+template<typename bufferT>
 class Model {
 public:
   Model();
 
-  BufferData& operator[](VertexDataLayer layer){ return vertex_buffer_data[layer]; }
+  BufferData<bufferT>& operator[](VertexDataLayer layer){ return vertex_buffer_data[layer]; }
 
   // Model finalization
   void create_vertex_object();
@@ -81,6 +87,6 @@ private:
   Transform world_pos;
   Shader program;
 
-  std::map<VertexDataLayer,BufferData> vertex_buffer_data;
+  std::map<VertexDataLayer,BufferData<bufferT>> vertex_buffer_data;
 };
 #endif //MODEL_H
