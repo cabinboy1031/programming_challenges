@@ -125,25 +125,11 @@ int main(){
 
   // Our ModelViewProjection
   glm::mat4 mvp = projection * camera * model; // Remember, matrix multiplication is the other way around
-  /*
-  GLuint vbo = 0;
-  glGenBuffers(1, &vbo);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, g_vertex_buffer_data.size() * 4 , g_vertex_buffer_data.data(), GL_STATIC_DRAW);
-  */
 
   BufferData<GLfloat> vbo;
   vbo.set_data(g_vertex_buffer_data);
   vbo.create_buffer_object();
 
-  /*
-  GLuint vao = 0;
-  glGenVertexArrays(1, &vao);
-  glBindVertexArray(vao);
-  glEnableVertexAttribArray(0);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo.id());
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-  */
   Shader default_shader = Shader();
   default_shader.load("default.vert", GL_VERTEX_SHADER);
   default_shader.load("test.frag", GL_FRAGMENT_SHADER);
@@ -169,7 +155,7 @@ int main(){
                        1,
                        GL_FALSE,
                        &mvp[0][0]);
-    
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     vao.draw(GL_TRIANGLES);
 
