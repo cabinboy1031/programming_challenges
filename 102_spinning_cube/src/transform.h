@@ -1,3 +1,5 @@
+#ifndef TRANSFORM_H
+#define TRANSFORM_H
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -14,3 +16,4 @@ struct Transform{
   void scale(float);
   glm::mat4 get_transform_matrix();
 };
+#endif

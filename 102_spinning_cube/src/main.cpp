@@ -2,6 +2,7 @@
 #include <string>
 #include <cassert>
 #include <time.h>
+#include <cmath>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -13,6 +14,7 @@
 #include "logging.h"
 #include "shader.h"
 #include "model.h"
+#include "loadModel.h"
 
 void _update_fps_counter(GLFWwindow *window);
 
@@ -57,59 +59,15 @@ int main(){
   glEnable(GL_DEPTH_TEST); // enable depth-testing
   glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
-  // Point object
-  /*
-    float points[] = {
-    -0.5f,  0.5f, 0.0f,
-    0.5f,  0.5f, 0.0f,
-    -0.5f, -0.5f, 0.0f,
-    0.5f, -0.5f, 0.0f
-    };
-  */
-  // Our vertices. Three consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
-  // A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
-  std::vector<GLfloat> g_vertex_buffer_data = {
-    -1.0f,-1.0f,-1.0f, // triangle 1 : begin
-    -1.0f,-1.0f, 1.0f,
-    -1.0f, 1.0f, 1.0f, // triangle 1 : end
-    1.0f, 1.0f,-1.0f, // triangle 2 : begin
-    -1.0f,-1.0f,-1.0f,
-    -1.0f, 1.0f,-1.0f, // triangle 2 : end
-    1.0f,-1.0f, 1.0f,
-    -1.0f,-1.0f,-1.0f,
-    1.0f,-1.0f,-1.0f,
-    1.0f, 1.0f,-1.0f,
-    1.0f,-1.0f,-1.0f,
-    -1.0f,-1.0f,-1.0f,
-    -1.0f,-1.0f,-1.0f,
-    -1.0f, 1.0f, 1.0f,
-    -1.0f, 1.0f,-1.0f,
-    1.0f,-1.0f, 1.0f,
-    -1.0f,-1.0f, 1.0f,
-    -1.0f,-1.0f,-1.0f,
-    -1.0f, 1.0f, 1.0f,
-    -1.0f,-1.0f, 1.0f,
-    1.0f,-1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f,-1.0f,-1.0f,
-    1.0f, 1.0f,-1.0f,
-    1.0f,-1.0f,-1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f,-1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f,-1.0f,
-    -1.0f, 1.0f,-1.0f,
-    1.0f, 1.0f, 1.0f,
-    -1.0f, 1.0f,-1.0f,
-    -1.0f, 1.0f, 1.0f,
-    1.0f, 1.0f, 1.0f,
-    -1.0f, 1.0f, 1.0f,
-    1.0f,-1.0f, 1.0f
-  };
+  // Read our .obj file
+  std::vector< glm::vec3 > vertices;
+  std::vector< glm::vec2 > uvs;
+  std::vector< glm::vec3 > normals; // Won't be used at the moment.
+  bool res = loadOBJ("cube.obj", vertices, uvs, normals);
 
   // Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
   glm::mat4 projection = glm::perspective(
-                                          glm::radians(45.0f),
+                                          glm::radians(90.0f),
                                           (float) vmode->width / (float)vmode->height,
                                           0.1f,
                                           100.0f);
@@ -126,8 +84,8 @@ int main(){
   // Our ModelViewProjection
   glm::mat4 mvp = projection * camera * model; // Remember, matrix multiplication is the other way around
 
-  BufferData<GLfloat> vbo;
-  vbo.set_data(g_vertex_buffer_data);
+  BufferData<glm::vec3> vbo;
+  vbo.set_data(vertices);
   vbo.create_buffer_object();
 
   Shader default_shader = Shader();
@@ -138,7 +96,7 @@ int main(){
   // Only during initialisation
   default_shader.link_uniform("MVP",GLSL_UNIFORM_MATRIX_VAR_4_FLOAT);
 
-  Model<GLfloat> vao;
+  Model<glm::vec3> vao;
   vao[VERTEX_POSITION] = vbo;
   vao.create_vertex_object();
   vao.set_shader(default_shader);
@@ -146,8 +104,9 @@ int main(){
   float time = 0.0f;
   while(!glfwWindowShouldClose(window)){
     _update_fps_counter(window);
-    model = glm::rotate(0.01f,glm::vec3(0,1,0)) * model;
-    model = glm::rotate(0.005f,glm::vec3(1,0,0)) * model;
+    time += 0.005f;
+    model = glm::rotate(static_cast<float>(sin(time)) / 10,glm::vec3(0,1,0)) * model;
+    model = glm::rotate(0.05f,glm::vec3(1,0,0)) * model;
     mvp = projection * camera * model;
     // Send our transformation to the currently bound shader, in the "MVP" uniform
     // This is done in the main loop since each model will have a different MVP matrix (At least for the M part)

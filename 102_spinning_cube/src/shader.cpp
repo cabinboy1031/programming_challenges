@@ -18,7 +18,7 @@ std::string Shader::load_file(std::string shader_filepath){
 
   file.open(shader_path + shader_filepath);
   if(!file.is_open()){
-    std::cerr << "Cannot open " << shader_filepath << "! File not found!" << std::endl;
+    gl_log_err("Cannot open %s! File not found!", shader_filepath);
     return "";
   } else {
     std::stringstream bufStream;
@@ -34,7 +34,7 @@ GLuint Shader::load(std::string filepath, GLenum shader_type){
   std::string shader_src = load_file(filepath);
   const char *ptr = shader_src.c_str();
 
-  std::cout << "Compiling shader:" <<  filepath << std::endl;
+  gl_log("Compiling shader: %s", filepath);
   GLuint shader_id = compile(shader_type, ptr);
   debug_shader(shader_id);
 
@@ -90,7 +90,7 @@ void Shader::attach(GLuint shader_id){
 }
 
 void Shader::link(){
-  std::cout << "Linking program" << std::endl;
+  gl_log("Linking program");
   glLinkProgram(program_id);
   debug_program();
 }

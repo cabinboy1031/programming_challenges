@@ -47,5 +47,5 @@ template<typename bufferT>
 void Model<bufferT>::draw(GLenum draw_mode){
   glUseProgram(program.id());
   glBindVertexArray(vertex_array_object);
-  glDrawArrays(draw_mode, 0, 12 * 3);
+  glDrawArrays(draw_mode, 0, vertex_buffer_data[VERTEX_POSITION].size() * sizeof(bufferT));
 }
